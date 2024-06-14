@@ -5,6 +5,6 @@ export function SubmitButton() {
   const { pending } = useFormStatus()
 
   return (
-    <button className="px-3 py-2 bg-blue-500 text-white rounded-md mt-4" disabled={pending}>{pending ? 'Carregando...' : 'Registrar'}</button>
+    <button className="px-3 py-2 bg-blue-500 text-white rounded-md mt-4" disabled={pending}>{pending ? 'Carregando...' : 'Salvar'}</button>
   )
 }
