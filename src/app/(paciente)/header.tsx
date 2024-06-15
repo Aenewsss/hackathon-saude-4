@@ -1,4 +1,5 @@
 'use client'
+import { Logout } from "@/utils/logout";
 import Link from "next/link";
 import { useState } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
@@ -10,6 +11,11 @@ const Header = () => {
         setIsOpen(!isOpen);
     };
 
+    async function logout() {
+        Logout()
+        toggleMenu
+    }
+
     return (
         <header className="bg-beige p-4 flex justify-between items-center relative">
             <div className="cursor-pointer z-20" onClick={toggleMenu}>
@@ -20,7 +26,7 @@ const Header = () => {
                 <Link onClick={toggleMenu} href="/paciente/gestao-filas" className="text-blue-700 text-4xl font-bold border-b-2 pb-4 border-blue-700">Gestão de Filas</Link>
                 <Link onClick={toggleMenu} href="/paciente/agendamentos" className="text-blue-700 text-4xl font-bold border-b-2 pb-4 border-blue-700">Agendamentos</Link>
                 <Link onClick={toggleMenu} href="/perfil" className="text-blue-700 text-4xl font-bold border-b-2 pb-4 border-blue-700">Perfil</Link>
-                <Link onClick={toggleMenu} href="/logout" className="text-blue-700 text-4xl font-bold border-b-2 pb-4 border-blue-700">Sair</Link>
+                <Link onClick={logout} href="/" className="text-blue-700 text-4xl font-bold border-b-2 pb-4 border-blue-700">Sair</Link>
             </nav>
         </header>
     );
