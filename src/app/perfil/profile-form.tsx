@@ -8,6 +8,7 @@ import { storageService } from "@/services/storage.service"
 import { UserEnum } from "@/enums"
 import { userService } from "@/services/user.service"
 import { ICoords, IUser } from "@/interfaces"
+import { healthInsuranceService } from "@/services/health-insurance.service"
 
 export default function ProfileForm() {
 
@@ -17,10 +18,12 @@ export default function ProfileForm() {
     const [UserId, setUserId] = useState();
     const [BirthdateFormatted, setBirthdateFormatted] = useState('0000-00-00');
     const [Coords, setCoords] = useState<ICoords>();
+    const [HealthInsurance, setHealthInsurance] = useState<string[]>();
 
     useEffect(() => {
         getCurrentLocation()
-        getData()
+        getUserData()
+        getHealthInsurances()
     }, []);
 
     useEffect(() => {
@@ -28,19 +31,21 @@ export default function ProfileForm() {
         if (state?.data) window.location.reload()
     }, [state]);
 
-
+    async function getHealthInsurances() {
+        const { data } = await healthInsuranceService.listAll()
+        setHealthInsurance(data)
+    }
 
     async function getCurrentLocation() {
         if (navigator.geolocation) navigator.geolocation.getCurrentPosition(pos => setCoords({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }))
         else alert("Seu navegador não suporta nossos serviços de geolocalização")
     }
 
-    async function getData() {
+    async function getUserData() {
         const userId = storageService.getItem(UserEnum.USER_ID)
         setUserId(userId)
 
         const { data } = await userService.getUser(userId)
-
         setUser(data)
 
         const date = new Date(data.birthdate);
@@ -50,14 +55,12 @@ export default function ProfileForm() {
         setBirthdateFormatted(`${year}-${month}-${day}`)
     }
 
-
-
     if (!User) return <p>Carregando...</p>
 
     return (
         <form action={action}>
             <div className="mb-4">
-                <label htmlFor="name" className="block text-gray-700">Nome</label>
+                <label htmlFor="name" className="block text-gray-700 font-semibold">Nome</label>
                 <input
                     defaultValue={User.name}
                     type="text"
@@ -68,7 +71,7 @@ export default function ProfileForm() {
                 />
             </div>
             <div className="mb-4">
-                <label htmlFor="birthdate" className="block text-gray-700">Data de nascimento</label>
+                <label htmlFor="birthdate" className="block text-gray-700 font-semibold">Data de nascimento</label>
                 <input
                     defaultValue={BirthdateFormatted}
                     type="date"
@@ -79,7 +82,22 @@ export default function ProfileForm() {
                 />
             </div>
             <div className="mb-4">
-                <label htmlFor="profile-type" className="block text-gray-700">Tipo de acesso</label>
+                <label className="block text-gray-700 font-semibold">Plano de Saúde</label>
+                <span>* Apenas selecione se possuir vínculo com plano de saúde</span>
+
+                <div className="flex flex-wrap gap-y-4">
+                    {
+                        HealthInsurance?.map((el, index) => (
+                            <div key={index} className="flex flex-1 gap-2 min-w-[160px] items-center">
+                                <input defaultChecked={User?.healthInsurance?.find(health => health == el) ? true : false} id={el} name='health-insurance' value={el} type="checkbox" />
+                                <label htmlFor={el}>{el}</label>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+            <div className="mb-4">
+                <label htmlFor="profile-type" className="block text-gray-700 font-semibold">Tipo de acesso</label>
                 {
                     !User.profileType
                         ? <select

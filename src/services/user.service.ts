@@ -25,20 +25,19 @@ class UserService {
         return { error: null, data: data.val() }
     }
 
-    async saveProfile(id: string, name:string ,birthdate: Date,profileType: string, coords?:ICoords) {
+    async saveProfile(id: string, name:string ,birthdate: Date,profileType: string, coords:ICoords, healthInsurance: string[]) {
         const dbRef = ref(database, `users/${id}`)
 
         const data = await get(dbRef)
 
         if (!data.exists()) return { data: null, error: ErrorEnum.NOT_FOUND }
 
-        console.log(coords)
-
         const updatedRef = update(dbRef, {
             name,
             birthdate,
             profileType,
-            coords
+            coords,
+            healthInsurance
         })
         
         return { error: null, data: data.val() }
