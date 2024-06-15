@@ -6,6 +6,7 @@ import { userService } from "@/services/user.service";
 import { storageService } from "@/services/storage.service";
 import { UserEnum } from "@/enums";
 import { createSession } from "../lib/session";
+import { GetProfileName } from "@/utils/get-profile-name.util";
 
 export default function SocialSignIn() {
 
@@ -26,12 +27,15 @@ export default function SocialSignIn() {
             const { data } = await userService.getUser(uid)
 
             await createSession(uid)
+            
             if (!data) {
                 await userService.createUser(uid, email!, displayName!)
                 return window.location.assign('/perfil')
             }
 
-            window.location.assign('/')
+            const profileName = GetProfileName(data.profileType)
+
+            window.location.assign(`/${profileName}`)
         }).catch((error) => {
             console.error('error:', error)
             const credential = GoogleAuthProvider.credentialFromError(error);
@@ -40,11 +44,9 @@ export default function SocialSignIn() {
     }
 
     return (
-        <div className="flex flex-col gap-4">
-            <button onClick={singIn} className="px-3 py-2 flex gap-4 rounded-md border items-center self-start bg-black text-white">
-                <Image width={30} height={30} src="/icons/google.svg" alt="Ícone Google" />
-                Continuar com Google
-            </button>
-        </div>
+        <button onClick={singIn} className="px-3 py-2 flex gap-4 rounded-md border items-center self-start bg-blue-700 text-white w-full">
+            <Image width={30} height={30} src="/icons/google.svg" alt="Ícone Google" />
+            Continuar com Google
+        </button>
     )
 }

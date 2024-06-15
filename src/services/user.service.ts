@@ -25,7 +25,7 @@ class UserService {
         return { error: null, data: data.val() }
     }
 
-    async saveProfile(id: string, name:string ,birthdate: Date,profileType: string, coords:ICoords, healthInsurance: string[]) {
+    async saveProfile(id: string, name: string, birthdate: Date, profileType: string, healthInsurance: string[], address:any) {
         const dbRef = ref(database, `users/${id}`)
 
         const data = await get(dbRef)
@@ -36,10 +36,10 @@ class UserService {
             name,
             birthdate,
             profileType,
-            coords,
-            healthInsurance
+            healthInsurance,
+            address
         })
-        
+
         return { error: null, data: data.val() }
 
     }

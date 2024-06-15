@@ -7,7 +7,7 @@ export interface IUser {
     healthInsurance: string[]
 }
 
-type ProfileType = 'patient' | 'hospital_unit' | 'healthcare_professional';
+export type ProfileType = 'patient' | 'hospital_unit' | 'healthcare_professional';
 
 export interface ICoords {
     latitude: number

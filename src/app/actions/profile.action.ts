@@ -1,6 +1,7 @@
 'use server'
 
 import { ICoords } from "@/interfaces"
+import { geolocationService } from "@/services/geolocation.service"
 import { userService } from "@/services/user.service"
 
 export async function saveProfile(state: any, formData: FormData) {
@@ -17,5 +18,7 @@ export async function saveProfile(state: any, formData: FormData) {
 
     const coords: ICoords = { latitude, longitude }
 
-    return await userService.saveProfile(id, name, new Date(birthdate), profileType, coords, healthInsurance)
+    const { data: address } = await geolocationService.getLocation(id, coords)
+
+    return await userService.saveProfile(id, name, new Date(birthdate), profileType, healthInsurance, address)
 }
