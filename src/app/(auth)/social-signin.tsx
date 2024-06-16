@@ -30,7 +30,7 @@ export default function SocialSignIn() {
             
             if (!data) {
                 await userService.createUser(uid, email!, displayName!)
-                return window.location.assign('/perfil')
+                return window.location.assign('/escolher-acesso')
             }
 
             const profileName = GetProfileName(data.profileType)

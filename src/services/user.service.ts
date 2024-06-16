@@ -1,7 +1,8 @@
 import { database } from "@/app/lib/firebase"
 import { ErrorEnum } from "@/enums"
-import { ICoords } from "@/interfaces"
+import { ICoords, ProfileType } from "@/interfaces"
 import { get, ref, set, update } from "firebase/database"
+import { hospitalService } from "./hospital.service"
 
 class UserService {
     async createUser(id: string, email: string, name: string) {
@@ -25,7 +26,7 @@ class UserService {
         return { error: null, data: data.val() }
     }
 
-    async saveProfile(id: string, name: string, birthdate: Date, profileType: string, healthInsurance: string[], address:any) {
+    async saveProfile(id: string, name: string, birthdate: Date, profileType: string, healthInsurance: string[], address: any) {
         const dbRef = ref(database, `users/${id}`)
 
         const data = await get(dbRef)
@@ -41,7 +42,19 @@ class UserService {
         })
 
         return { error: null, data: data.val() }
+    }
 
+    async updateProfileType(id: string, profileType: ProfileType) {
+        const dbRef = ref(database, `users/${id}`)
+
+        const data = await get(dbRef)
+        if (!data.exists()) return { data: null, error: ErrorEnum.NOT_FOUND }
+
+        await update(dbRef, {
+            profileType
+        })
+
+        return { error: null, data: profileType }
     }
 }
 
