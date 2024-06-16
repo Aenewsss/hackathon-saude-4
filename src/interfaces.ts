@@ -17,7 +17,6 @@ export interface IProfessional extends IAccess {
 
 export interface IHospital extends IAccess {
     professionals: string[] //array com os IDs dos profissionais
-    specialties: string[] // array com as especialidades que o hospital atende
 }
 
 interface IAccess {

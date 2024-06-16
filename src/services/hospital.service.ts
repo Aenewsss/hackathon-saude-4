@@ -28,7 +28,7 @@ class HospitalService {
         return { data: null, error: ErrorEnum.NOT_FOUND }
     }
 
-    async update(id: string, data: Partial<IHospital>) {
+    async update(id: string, data: IHospital) {
         const dbRef = ref(database, `hospitals/${id}`);
         const snapshot = await get(dbRef);
         if (!snapshot.exists()) return { data: null, error: ErrorEnum.NOT_FOUND };

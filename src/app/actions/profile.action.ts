@@ -2,6 +2,7 @@
 
 import { ICoords, ProfileType } from "@/interfaces"
 import { geolocationService } from "@/services/geolocation.service"
+import { hospitalService } from "@/services/hospital.service"
 import { userService } from "@/services/user.service"
 
 export async function saveProfile(state: any, formData: FormData) {
@@ -44,6 +45,32 @@ export async function saveProfile(state: any, formData: FormData) {
             specialties
         }
 
+        return await userService.saveProfile(id, dataToSave)
+    } else {
+        const cep = formData.get('cep')?.toString()!
+        const city = formData.get('city')?.toString()!
+        const state = formData.get('state')?.toString()!
+        const street = formData.get('street')?.toString()!
+        const professionals = formData.getAll('professional') as string[]
+
+        dataToSave = {
+            ...dataToSave,
+            address: {
+                cep,
+                city,
+                state,
+                street,
+            },
+            professionals
+        }
+
+        const hospital = await hospitalService.listById(id)
+
+        hospital
+            ? await hospitalService.update(id, dataToSave)
+            : await hospitalService.create(id, dataToSave)
+
+        delete dataToSave.professionals
         return await userService.saveProfile(id, dataToSave)
     }
 }
