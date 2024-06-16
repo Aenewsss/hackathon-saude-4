@@ -16,15 +16,19 @@ class QueueService {
             hospitalId,
         };
 
-        console.log(id, newQueue, hospitalId)
-        
         await set(ref(database, `queues/${id}`), newQueue);
-        return { data: newQueue ,error: null };
+        return { data: newQueue, error: null };
     }
 
     async list() {
         const snapshot = await get(this.queuesRef);
         if (snapshot.exists()) return { data: Object.values(snapshot.val()), error: null }
+        else return { data: [], error: null }
+    }
+
+    async listByUserId(id: string) {
+        const snapshot = await get(this.queuesRef);
+        if (snapshot.exists()) return { data: Object.values(snapshot.val()).filter((el: any) => el.userId == id).reverse()[0], error: null }
         else return { data: [], error: null }
     }
 
@@ -42,7 +46,7 @@ class QueueService {
         const updatedData = {
             screeningData: data
         };
-        
+
         await update(dbRef, updatedData);
 
         const updatedSnapshot = await get(dbRef);

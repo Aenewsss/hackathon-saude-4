@@ -30,10 +30,18 @@ export async function saveProfile(state: any, formData: FormData) {
 
     if (profileType == 'patient') {
         const birthdate = formData.get("birthdate")?.toString()!
+        const cpf = formData.get("cpf")?.toString()!
+        const phone = formData.get("phone")?.toString()!
+        const emergencyPhone = formData.get("emergency-phone")?.toString()!
+        const sex = formData.get("sex")?.toString()!
 
         dataToSave = {
             ...dataToSave,
             birthdate: new Date(birthdate),
+            cpf,
+            phone,
+            emergencyPhone,
+            sex
         }
 
         return await userService.saveProfile(id, dataToSave)

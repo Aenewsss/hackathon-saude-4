@@ -1,6 +1,10 @@
 export interface IUser extends IAccess {
     profileType: ProfileType
     birthdate: string
+    sex: string
+    phone: string
+    emergencyPhone: string
+    cpf: string
 }
 
 export type ProfileType = 'patient' | 'hospital_unit' | 'healthcare_professional';
