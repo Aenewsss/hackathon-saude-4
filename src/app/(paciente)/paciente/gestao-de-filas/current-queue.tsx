@@ -56,10 +56,18 @@ export default function CurrentQueue() {
         return age;
     }
 
+    console.log(Queue)
+
+    async function removeQueue() {
+        const userId = storageService.getItem(UserEnum.USER_ID)
+        await queueService.deleteByUserId(userId)
+        window.location.reload()
+    }
+
     return (
         <div className="p-6 rounded-lg shadow-md w-full max-w-md border border-stone-300 my-6">
             <h2 className="text-blue-700 text-3xl font-bold">Fila Atual</h2>
-            <span className="text-blue-700 font-bold text-xl">Tempo estimado {AverageQueueTime}</span>
+            <span className="text-blue-700 font-bold text-xl">Tempo estimado {AverageQueueTime} min</span>
             <h3 className="text-blue-700 text-xl font-semibold mt-6">{Hospital.name}</h3>
             <p className="text-gray-700 mb-2">{Hospital.address.street}</p>
             <p className="text-gray-700 mb-2">{Hospital.address.city}, {Hospital.address.state}</p>
@@ -77,6 +85,7 @@ export default function CurrentQueue() {
                 <li className="text-gray-700 mb-2">Idade:{formatAge(User.birthdate)} </li>
                 <li className="text-gray-700 mb-2">Contato de emergência: {User.emergencyPhone}</li>
             </ul>
+            <button className="px-2 py-2 bg-red-500 text-white rounded-md mt-6" onClick={removeQueue}>Sair da fila</button>
         </div>
     );
 }

@@ -16,8 +16,6 @@ class QueueService {
             hospitalId,
         };
 
-        console.log(id, 'line 19')
-
         await set(ref(database, `queues/${id}`), newQueue);
         return { data: { ...newQueue, id }, error: null };
     }
@@ -100,6 +98,22 @@ class QueueService {
         await remove(dbRef);
         return { data: { id }, error: null };
     }
+
+    async deleteByUserId(userId: string) {
+        const snapshot = await get(this.queuesRef);
+        if (!snapshot.exists()) return { data: null, error: 'NOT_FOUND' };
+
+        const queues = snapshot.val();
+        const queueKey = Object.keys(queues).find(key => queues[key].userId === userId);
+
+        if (!queueKey) return { data: null, error: 'NOT_FOUND' };
+
+        const queueRef = ref(database, `queues/${queueKey}`);
+        await remove(queueRef);
+        return { data:  queueKey , error: null };
+    }
+
+
 }
 
 export const queueService = new QueueService();
