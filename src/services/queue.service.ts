@@ -75,6 +75,16 @@ class QueueService {
         else return { data: 0, error: null }
     }
 
+    async listByHospitalId(id: string) {
+        const snapshot = await get(this.queuesRef);
+
+        if (!snapshot.exists()) return { data: null, error: ErrorEnum.NOT_FOUND }
+
+        const filteredByHospital = Object.values(snapshot.val()).filter((el: any) => el.hospitalId == id)
+
+        return {data: filteredByHospital, error: null}
+    }
+
     async update(id: string, data: any) {
         const dbRef = ref(database, `queues/${id}`);
         const snapshot = await get(dbRef);
@@ -110,7 +120,7 @@ class QueueService {
 
         const queueRef = ref(database, `queues/${queueKey}`);
         await remove(queueRef);
-        return { data:  queueKey , error: null };
+        return { data: queueKey, error: null };
     }
 
 
