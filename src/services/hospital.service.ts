@@ -18,8 +18,11 @@ class HospitalService {
 
     async list() {
         const snapshot = await get(this.hospitalsRef);
-        if (snapshot.exists()) return { data: Object.values(snapshot.val()), error: null }
-        else return { data: [], error: null };
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const hospitals = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            return { data: hospitals, error: null };
+        } else return { data: [], error: null }
     }
 
     async listById(id: string) {

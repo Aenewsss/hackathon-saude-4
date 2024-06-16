@@ -27,3 +27,10 @@ interface IAccess {
     healthInsurance: string[]
     email: string
 }
+
+export interface IQueue {
+    id?: string;
+    userId: string;
+    hospitalId: string;
+    screeningData?: any;
+}

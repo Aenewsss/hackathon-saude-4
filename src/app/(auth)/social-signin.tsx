@@ -24,7 +24,7 @@ export default function SocialSignIn() {
             storageService.setItem(UserEnum.USER_EMAIL, email)
             storageService.setItem(UserEnum.USER_ID, uid)
 
-            const { data } = await userService.getUser(uid)
+            const { data } = await userService.getById(uid)
 
             await createSession(uid)
             

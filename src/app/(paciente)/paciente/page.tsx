@@ -11,12 +11,12 @@ export default function Page() {
                 <Card
                     title="Gestão de filas"
                     description="Gerencie sua posição na fila em tempo real"
-                    link="/queue-management"
+                    link="/paciente/gestao-de-filas"
                 />
                 <Card
                     title="Agendamentos"
                     description="Agende suas consultas de forma rápida e fácil"
-                    link="/schedule"
+                    link="/paciente/agendamentos"
                 />
             </div>
         </main>
@@ -28,7 +28,10 @@ const Card = ({ title, description, link }: any) => {
         <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center">
             <h2 className="text-blue-700 text-2xl font-bold mb-4">{title}</h2>
             <p className="text-gray-700 text-center mb-6">{description}</p>
-            <Link href={link} className="bg-blue-500 text-white py-2 px-4 rounded-md text-lg">Acessar</Link>
+            {title == 'Agendamentos'
+                ? <button disabled className="bg-gray-500 text-white py-2 px-4 rounded-md text-lg opacity-70">Em breve</button>
+                : <Link href={link} className="bg-blue-500 text-white py-2 px-4 rounded-md text-lg">Acessar</Link>
+            }
         </div>
     );
 };
