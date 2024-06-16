@@ -25,6 +25,7 @@ export default function HospitalsList() {
     async function chooseHospital(id: string) {
         const userId = storageService.getItem(UserEnum.USER_ID)
         const { data } = await queueService.create(userId, id);
+        console.log('data line 28', data)
         router.push(`/paciente/triagem/${data.id}`);
     }
 

@@ -16,8 +16,10 @@ class QueueService {
             hospitalId,
         };
 
+        console.log(id, 'line 19')
+
         await set(ref(database, `queues/${id}`), newQueue);
-        return { data: newQueue, error: null };
+        return { data: { ...newQueue, id }, error: null };
     }
 
     async list() {
@@ -38,6 +40,43 @@ class QueueService {
         else return { data: [], error: null }
     }
 
+    async getAverageQueueTime(hospitalId: string, currentUrgency: string) {
+        const snapshot = await get(this.queuesRef);
+
+        const queueFiltered = Object.values(snapshot.val()).filter((el: any) => el.hospitalId == hospitalId).reverse()
+
+        const listByUrgency = queueFiltered
+            .map((hospital: any) => Number(hospital.screeningData.urgency))
+            .concat([Number(currentUrgency)])
+            .sort((a, b) => a - b)
+
+        const urgencyTimes = listByUrgency.reduce((acc: any, curr: any) => {
+            if (curr == 1) acc.urgency1 += 1
+            if (curr == 2) acc.urgency2 += 1
+            if (curr == 3) acc.urgency3 += 1
+            if (curr == 4) acc.urgency4 += 1
+            if (curr == 5) acc.urgency5 += 1
+
+            return acc
+        },
+            {
+                urgency1: 0,
+                urgency2: 0,
+                urgency3: 0,
+                urgency4: 0,
+                urgency5: 0,
+            }
+        )
+
+        const averageTime =
+            urgencyTimes.urgency1 * 0 + urgencyTimes.urgency2 * 10 +
+            urgencyTimes.urgency3 * 60 + urgencyTimes.urgency4 * 120 +
+            urgencyTimes.urgency5 * 240
+
+        if (snapshot.exists()) return { data: averageTime, error: null }
+        else return { data: 0, error: null }
+    }
+
     async update(id: string, data: any) {
         const dbRef = ref(database, `queues/${id}`);
         const snapshot = await get(dbRef);
@@ -50,7 +89,7 @@ class QueueService {
         await update(dbRef, updatedData);
 
         const updatedSnapshot = await get(dbRef);
-        return { data: updatedSnapshot.val(), error: null };
+        return { data: updatedData, error: null };
     }
 
     async delete(id: string) {

@@ -18,6 +18,5 @@ export async function screening(state: any, formData: FormData) {
         illness,
         urgency
     }
-
     return await queueService.update(id, data)
 }

@@ -14,7 +14,7 @@ export default function ScreeningForm({ id }: { id: string }) {
     useEffect(() => {
         if (state?.error) alert(state.error)
         if (state?.data) router.push('/paciente/gestao-de-filas')
-    }, []);
+    }, [state]);
 
     return (
         <form action={action} className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
