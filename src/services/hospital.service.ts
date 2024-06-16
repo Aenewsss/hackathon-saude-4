@@ -1,39 +1,31 @@
-// src/services/hospital.service.ts
 import { database } from "@/app/lib/firebase";
 import { ErrorEnum } from "@/enums";
 import { IHospital } from "@/interfaces";
 import { ref, set, get, update, remove, child } from "firebase/database";
-import { v4 as uuidv4 } from 'uuid';
 
 class HospitalService {
     private hospitalsRef = ref(database, 'hospitals');
 
-    async create(data: IHospital) {
-        const id = uuidv4();
+    async create(id: string, data: IHospital) {
         const newHospital: IHospital = {
             id,
             ...data,
         };
         await set(ref(database, `hospitals/${id}`), newHospital);
-        return newHospital;
+
+        return { data: newHospital, error: null };
     }
 
     async list() {
         const snapshot = await get(this.hospitalsRef);
-        if (snapshot.exists()) {
-            return Object.values(snapshot.val()) as IHospital[];
-        } else {
-            return [];
-        }
+        if (snapshot.exists()) return { data: Object.values(snapshot.val()), error: null }
+        else return { data: [], error: null };
     }
 
     async listById(id: string) {
         const snapshot = await get(child(this.hospitalsRef, id));
-        if (snapshot.exists()) {
-            return snapshot.val() as IHospital;
-        } else {
-            return null;
-        }
+        if (snapshot.exists()) return { data: snapshot.val(), error: null };
+        return { data: null, error: ErrorEnum.NOT_FOUND }
     }
 
     async update(id: string, data: Partial<IHospital>) {

@@ -1,15 +1,13 @@
 'use server'
 
-import { ICoords } from "@/interfaces"
+import { ICoords, ProfileType } from "@/interfaces"
 import { geolocationService } from "@/services/geolocation.service"
 import { userService } from "@/services/user.service"
 
 export async function saveProfile(state: any, formData: FormData) {
     const id = formData.get("id")?.toString()!
     const name = formData.get("name")?.toString()!
-    const birthdate = formData.get("birthdate")?.toString()!
-    const profileType = formData.get("profile-type")?.toString()!
-
+    const profileType = formData.get("profile-type")?.toString()! as ProfileType
     const healthInsurance = formData.getAll("health-insurance") as string[]
 
     // COORDS
@@ -20,5 +18,32 @@ export async function saveProfile(state: any, formData: FormData) {
 
     const { data: address } = await geolocationService.getLocation(id, coords)
 
-    return await userService.saveProfile(id, name, new Date(birthdate), profileType, healthInsurance, address)
+    let dataToSave: any = {
+        name,
+        profileType,
+        healthInsurance,
+        address
+    }
+
+    console.log(profileType, id)
+
+    if (profileType == 'patient') {
+        const birthdate = formData.get("birthdate")?.toString()!
+
+        dataToSave = {
+            ...dataToSave,
+            birthdate: new Date(birthdate),
+        }
+
+        return await userService.saveProfile(id, dataToSave)
+    } else if (profileType == 'healthcare_professional') {
+        const specialties = formData.getAll("specialty") as string[]
+
+        dataToSave = {
+            ...dataToSave,
+            specialties
+        }
+
+        return await userService.saveProfile(id, dataToSave)
+    }
 }

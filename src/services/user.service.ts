@@ -16,7 +16,7 @@ class UserService {
         )
     }
 
-    async getUser(id: string) {
+    async getById(id: string) {
         const dbRef = ref(database, `users/${id}`)
 
         const data = await get(dbRef)
@@ -26,7 +26,7 @@ class UserService {
         return { error: null, data: data.val() }
     }
 
-    async saveProfile(id: string, name: string, birthdate: Date, profileType: string, healthInsurance: string[], address: any) {
+    async saveProfile(id: string, dataToSave:any) {
         const dbRef = ref(database, `users/${id}`)
 
         const data = await get(dbRef)
@@ -34,11 +34,7 @@ class UserService {
         if (!data.exists()) return { data: null, error: ErrorEnum.NOT_FOUND }
 
         const updatedRef = update(dbRef, {
-            name,
-            birthdate,
-            profileType,
-            healthInsurance,
-            address
+            ...dataToSave
         })
 
         return { error: null, data: data.val() }
@@ -55,6 +51,21 @@ class UserService {
         })
 
         return { error: null, data: profileType }
+    }
+
+    async getUsersByProfileType(profileType: ProfileType) {
+        const dbRef = ref(database, `users/`)
+
+        const data = await get(dbRef)
+
+        if (!data.exists()) return { data: null, error: ErrorEnum.NOT_FOUND }
+
+        const users = data.val()
+        const filteredUsers = Object.keys(users)
+            .filter(el => users[el].profileType == profileType)
+            .map(el => ({ id: el, ...users[el] })) as any
+
+        return { error: null, data: filteredUsers }
     }
 }
 

@@ -17,5 +17,15 @@
 }
 
 body {
+  @apply bg-beige;
+}
 
+::-webkit-scrollbar{
+  @apply bg-beige;
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb{
+  @apply bg-blue-700;
+  border-radius: 10px;
 }

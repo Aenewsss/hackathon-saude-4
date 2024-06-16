@@ -10,8 +10,13 @@ export interface ICoords {
     longitude: number
 }
 
+export interface IProfessional extends IAccess {
+    specialties: string[]
+    profileType: ProfileType
+}
+
 export interface IHospital extends IAccess {
-    profesionals: string[] //array com os IDs dos profissionais
+    professionals: string[] //array com os IDs dos profissionais
     specialties: string[] // array com as especialidades que o hospital atende
 }
 

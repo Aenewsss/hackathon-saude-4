@@ -10,6 +10,9 @@ import { userService } from "@/services/user.service"
 import { ICoords, IUser } from "@/interfaces"
 import { healthInsuranceService } from "@/services/health-insurance.service"
 import { GetProfileName } from "@/utils/get-profile-name.util"
+import PatientInputs from "./patient-inputs"
+import HospitalInputs from "./hospital-inputs"
+import ProfessionalInputs from "./professional-inputs"
 
 export default function ProfileForm() {
 
@@ -17,7 +20,6 @@ export default function ProfileForm() {
 
     const [User, setUser] = useState<IUser>();
     const [UserId, setUserId] = useState();
-    const [BirthdateFormatted, setBirthdateFormatted] = useState('0000-00-00');
     const [Coords, setCoords] = useState<ICoords>();
     const [HealthInsurance, setHealthInsurance] = useState<string[]>();
 
@@ -49,14 +51,8 @@ export default function ProfileForm() {
         const userId = storageService.getItem(UserEnum.USER_ID)
         setUserId(userId)
 
-        const { data } = await userService.getUser(userId)
+        const { data } = await userService.getById(userId)
         setUser(data)
-
-        const date = new Date(data.birthdate);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-        const day = String(date.getDate()).padStart(2, '0');
-        setBirthdateFormatted(`${year}-${month}-${day}`)
     }
 
     if (!User) return <p>Carregando...</p>
@@ -70,17 +66,6 @@ export default function ProfileForm() {
                     type="text"
                     id="name"
                     name="name"
-                    className="mt-1 p-2 w-full border rounded-md bg-stone-300"
-                    required
-                />
-            </div>
-            <div className="mb-4">
-                <label htmlFor="birthdate" className="block text-blue-700 text-lg font-semibold">Data de nascimento</label>
-                <input
-                    defaultValue={BirthdateFormatted}
-                    type="date"
-                    id="birthdate"
-                    name="birthdate"
                     className="mt-1 p-2 w-full border rounded-md bg-stone-300"
                     required
                 />
@@ -114,20 +99,39 @@ export default function ProfileForm() {
                             <option value="hospital_unit">Unidade Hospitalar</option>
                             <option value="healthcare_professional">Profissional da Saúde</option>
                         </select>
-                        : <input
-                            defaultValue={GetProfileName(User.profileType)}
-                            type="text"
-                            id="profile-type"
-                            name="profile-type"
-                            readOnly
-                            className="mt-1 p-2 w-full border rounded-md bg-stone-300 opacity-50 capitalize"
-                        />
+                        : <>
+                            <input
+                                defaultValue={GetProfileName(User.profileType)}
+                                type="text"
+                                readOnly
+                                name="profile-readonly"
+                                className="mt-1 p-2 w-full border rounded-md bg-stone-300 opacity-50 capitalize"
+                            />
+                            <input
+                                defaultValue={User.profileType}
+                                type="text"
+                                id="profile-type"
+                                name="profile-type"
+                                readOnly
+                                hidden
+                                className="mt-1 p-2 w-full border rounded-md bg-stone-300 opacity-50 capitalize"
+                            />
+                        </>
                 }
 
                 <input defaultValue={UserId} type="text" name="id" hidden />
                 <input defaultValue={Coords?.latitude} type="text" name="latitude" hidden />
                 <input defaultValue={Coords?.longitude} type="text" name="longitude" hidden />
             </div>
+
+            {
+                User.profileType == 'patient'
+                    ? <PatientInputs user={User} />
+                    : User.profileType == 'healthcare_professional'
+                        ? <ProfessionalInputs id={UserId} />
+                        : <HospitalInputs id={UserId} />
+            }
+
             <SubmitButton />
         </form>
     )
