@@ -21,7 +21,7 @@ export default function CurrentQueue() {
     async function getData() {
         const userId = storageService.getItem(UserEnum.USER_ID)
 
-        const { data: queue } = await queueService.listByUserId(userId)
+        const { data: queue } = await queueService.listByUserId(userId) as any
         setQueue(queue as any)
 
         const { data: user } = await userService.getById(queue.userId)
